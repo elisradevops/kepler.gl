@@ -71,5 +71,10 @@
     "node": "18.18.2",
     "yarn": "4.4.0"
   },
-  "packageManager": "yarn@4.4.0"
+  "packageManager": "yarn@4.4.0",
+  "devDependencies": {
+    "@babel/cli": "^7.28.6",
+    "@babel/core": "^7.28.6",
+    "@types/babel__core": "^7"
+  }
 }
