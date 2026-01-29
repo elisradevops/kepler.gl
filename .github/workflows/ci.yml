@@ -2,7 +2,7 @@ name: "🚀 CI"
 on:
   pull_request:
     branches:
-      - main
+      - master
     paths-ignore:
       - '.github/**'
 jobs:
