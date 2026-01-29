@@ -1,6 +1,5 @@
 # CONTRIBUTING
 
-some test
 Great to have you here. Here are a few ways you can help make kepler.gl even better!
 
 - [Developer Certification of Origin \(DCO\)](./#developer-certification-of-origin-dco)
