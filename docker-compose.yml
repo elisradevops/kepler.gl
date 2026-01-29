@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  kepler-demo:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - '8080:80'
+    environment:
+      MAPBOX_ACCESS_TOKEN: ${MAPBOX_ACCESS_TOKEN:-}
+      DROPBOX_CLIENT_ID: ${DROPBOX_CLIENT_ID:-}
+      MAPBOX_EXPORT_TOKEN: ${MAPBOX_EXPORT_TOKEN:-}
+      CARTO_CLIENT_ID: ${CARTO_CLIENT_ID:-}
+      FOURSQUARE_CLIENT_ID: ${FOURSQUARE_CLIENT_ID:-}
+      FOURSQUARE_DOMAIN: ${FOURSQUARE_DOMAIN:-}
+      FOURSQUARE_API_URL: ${FOURSQUARE_API_URL:-}
+      FOURSQUARE_USER_MAPS_URL: ${FOURSQUARE_USER_MAPS_URL:-}
