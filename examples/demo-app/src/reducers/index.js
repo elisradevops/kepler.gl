@@ -26,7 +26,8 @@ import {
   loadRemoteDatasetProcessedSuccessAction
 } from '../actions';
 
-import {CLOUD_PROVIDERS_CONFIGURATION} from '../constants/default-settings';
+import {CLOUD_PROVIDERS_CONFIGURATION, OFFLINE_MODE} from '../constants/default-settings';
+import {OFFLINE_MAP_STYLE_ID} from '../constants/offline-map-style';
 import {generateHashId} from '../utils/strings';
 
 // initialize kepler demo-app with DuckDB plugin
@@ -116,6 +117,11 @@ const demoReducer = combineReducers({
           : {})
       }
     },
+    mapStyle: OFFLINE_MODE
+      ? {
+          styleType: OFFLINE_MAP_STYLE_ID
+        }
+      : {},
     visState: {
       loaders: [], // Add additional loaders.gl loaders here
       loadOptions: {} // Add additional loaders.gl loader options here

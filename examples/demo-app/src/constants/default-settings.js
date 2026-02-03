@@ -5,7 +5,11 @@
 and segments both use queryRunner */
 import keyMirror from 'keymirror';
 
-export const ASSETS_URL = 'https://d1a3f4spazzrp4.cloudfront.net/kepler.gl/';
+export const OFFLINE_MODE = true;
+
+export const ASSETS_URL = OFFLINE_MODE
+  ? ''
+  : 'https://d1a3f4spazzrp4.cloudfront.net/kepler.gl/';
 export const DATA_URL = 'https://raw.githubusercontent.com/keplergl/kepler.gl-data/master/';
 export const MAP_URI = 'demo/map?mapUrl=';
 /*
@@ -40,7 +44,7 @@ export const LOADING_SAMPLE_ERROR_MESSAGE = 'Not able to load sample';
 export const CORS_LINK = 'https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS';
 
 export const DEFAULT_FEATURE_FLAGS = {
-  cloudStorage: true
+  cloudStorage: false
 };
 
 export const CLOUD_PROVIDERS_CONFIGURATION = {

@@ -20,13 +20,30 @@ const DROPBOX_CLIENT_NAME = 'Kepler.gl Demo App';
 
 export const DEFAULT_CLOUD_PROVIDER = 'dropbox';
 
+const hasFoursquareConfig = Boolean(
+  FOURSQUARE_CLIENT_ID &&
+    FOURSQUARE_DOMAIN &&
+    FOURSQUARE_API_URL &&
+    FOURSQUARE_USER_MAPS_URL
+);
+
+const isSecureOrigin =
+  typeof window !== 'undefined' &&
+  (window.location.protocol === 'https:' ||
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1');
+
 export const CLOUD_PROVIDERS = [
-  new FoursquareProvider({
-    clientId: FOURSQUARE_CLIENT_ID,
-    authDomain: FOURSQUARE_DOMAIN,
-    apiURL: FOURSQUARE_API_URL,
-    userMapsURL: FOURSQUARE_USER_MAPS_URL
-  }),
+  ...(hasFoursquareConfig && isSecureOrigin
+    ? [
+        new FoursquareProvider({
+          clientId: FOURSQUARE_CLIENT_ID,
+          authDomain: FOURSQUARE_DOMAIN,
+          apiURL: FOURSQUARE_API_URL,
+          userMapsURL: FOURSQUARE_USER_MAPS_URL
+        })
+      ]
+    : []),
   new DropboxProvider(DROPBOX_CLIENT_ID, DROPBOX_CLIENT_NAME),
   new CartoProvider(CARTO_CLIENT_ID)
 ];

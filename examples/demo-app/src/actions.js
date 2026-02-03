@@ -15,7 +15,8 @@ import {ParquetWasmLoader} from '@loaders.gl/parquet';
 import {
   LOADING_SAMPLE_ERROR_MESSAGE,
   LOADING_SAMPLE_LIST_ERROR_MESSAGE,
-  MAP_CONFIG_URL
+  MAP_CONFIG_URL,
+  OFFLINE_MODE
 } from './constants/default-settings';
 
 // CONSTANTS
@@ -292,6 +293,11 @@ function loadRemoteData(url) {
  */
 export function loadSampleConfigurations(sampleMapId = null) {
   return dispatch => {
+    if (OFFLINE_MODE) {
+      dispatch(loadMapSampleFile([]));
+      return;
+    }
+
     fetch(MAP_CONFIG_URL)
       .then(response => {
         if (!response.ok) {
