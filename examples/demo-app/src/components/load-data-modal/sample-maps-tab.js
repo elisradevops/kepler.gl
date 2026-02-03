@@ -7,10 +7,11 @@ import {Icons} from '@kepler.gl/components';
 import {media} from '@kepler.gl/styles';
 import {FormattedMessage} from 'react-intl';
 
-import {ASSETS_URL} from '../../constants/default-settings';
+import {ASSETS_URL, OFFLINE_MODE} from '../../constants/default-settings';
 
 const StyledMapIcon = styled.div`
-  background-image: url('${ASSETS_URL}icon-demo-map.jpg');
+  background-image: ${props =>
+    props.$offline ? 'none' : `url('${ASSETS_URL}icon-demo-map.jpg')`};
   background-repeat: no-repeat;
   background-size: 64px 48px;
   width: 64px;
@@ -73,7 +74,7 @@ const StyledTrySampleData = styled.div`
 const SampleMapsTab = ({onClick}) => {
   return (
     <StyledTrySampleData className="try-sample-data">
-      <StyledMapIcon className="demo-map-icon" />
+      <StyledMapIcon className="demo-map-icon" $offline={OFFLINE_MODE} />
       <div className="demo-map-title">
         <div className="demo-map-label">
           <FormattedMessage id={'sampleMapsTab.noData'} defaultMessage="No Data" />

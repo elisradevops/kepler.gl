@@ -27,7 +27,12 @@ import Announcement, {FormLink} from './components/announcement';
 import {replaceLoadDataModal} from './factories/load-data-modal';
 import {replaceMapControl} from './factories/map-control';
 import {replacePanelHeader} from './factories/panel-header';
-import {CLOUD_PROVIDERS_CONFIGURATION, DEFAULT_FEATURE_FLAGS} from './constants/default-settings';
+import {
+  CLOUD_PROVIDERS_CONFIGURATION,
+  DEFAULT_FEATURE_FLAGS,
+  OFFLINE_MODE
+} from './constants/default-settings';
+import {OFFLINE_MAP_STYLE, OFFLINE_MAP_STYLE_ID} from './constants/offline-map-style';
 import {messages} from './constants/localization';
 
 import {
@@ -155,6 +160,28 @@ const App = props => {
   const [showBanner, toggleShowBanner] = useState(false);
   const {params: {id, provider} = {}, location: {query = {}} = {}} = props;
   const dispatch = useDispatch();
+  const mapboxApiAccessToken = OFFLINE_MODE
+    ? 'offline'
+    : CLOUD_PROVIDERS_CONFIGURATION.MAPBOX_TOKEN;
+
+  const applyOfflineMapStyle = useCallback(config => {
+    if (!OFFLINE_MODE || !config?.config) {
+      return config;
+    }
+
+    return {
+      ...config,
+      config: {
+        ...config.config,
+        mapStyle: {
+          styleType: OFFLINE_MAP_STYLE_ID,
+          mapStyles: {
+            [OFFLINE_MAP_STYLE_ID]: OFFLINE_MAP_STYLE
+          }
+        }
+      }
+    };
+  }, []);
 
   // TODO find another way to check for existence of duckDb plugin
   const duckDbPluginEnabled = (getApplicationConfig().plugins || []).some(p => p.name === 'duckdb');
@@ -277,7 +304,7 @@ const App = props => {
         config: rowDataConfig
       })
     );
-  }, [dispatch]);
+  }, [dispatch, applyOfflineMapStyle]);
 
   const _loadVectorTileData = useCallback(() => {
     dispatch(
@@ -348,7 +375,7 @@ const App = props => {
         }
       })
     );
-  }, [dispatch]);
+  }, [dispatch, applyOfflineMapStyle]);
 
   const _loadPointData = useCallback(() => {
     dispatch(
@@ -381,10 +408,10 @@ const App = props => {
           // centerMap: true,
           keepExistingConfig: true
         },
-        config: sampleTripDataConfig
+        config: applyOfflineMapStyle(sampleTripDataConfig)
       })
     );
-  }, [dispatch]);
+  }, [dispatch, applyOfflineMapStyle]);
 
   const _loadScenegraphLayer = useCallback(() => {
     dispatch(
@@ -418,7 +445,7 @@ const App = props => {
         }
       })
     );
-  }, [dispatch]);
+  }, [dispatch, applyOfflineMapStyle]);
 
   const _loadIconData = useCallback(() => {
     // load icon data and config and process csv file
@@ -435,7 +462,7 @@ const App = props => {
         ]
       })
     );
-  }, [dispatch]);
+  }, [dispatch, applyOfflineMapStyle]);
 
   const _loadTripGeoJson = useCallback(() => {
     dispatch(
@@ -473,7 +500,7 @@ const App = props => {
         options: {
           keepExistingConfig: true
         },
-        config: sampleGeojsonConfig as ParsedConfig
+        config: applyOfflineMapStyle(sampleGeojsonConfig) as ParsedConfig
       })
     );
   }, [dispatch]);
@@ -495,7 +522,7 @@ const App = props => {
             data: pointData
           }
         ],
-        config: syncedTripConfig,
+        config: applyOfflineMapStyle(syncedTripConfig),
         options: {
           centerMap: true
         }
@@ -550,7 +577,7 @@ const App = props => {
             data: processCsvData(sampleH3Data)
           }
         ],
-        config: h3MapConfig,
+        config: applyOfflineMapStyle(h3MapConfig),
         options: {
           keepExistingConfig: true
         }
@@ -571,7 +598,7 @@ const App = props => {
             data: processCsvData(sampleS2Data)
           }
         ],
-        config: s2MapConfig as ParsedConfig,
+        config: applyOfflineMapStyle(s2MapConfig) as ParsedConfig,
         options: {
           keepExistingConfig: true
         }
@@ -656,12 +683,14 @@ const App = props => {
                       <AutoSizer>
                         {({height, width}) => (
                           <KeplerGl
-                            mapboxApiAccessToken={CLOUD_PROVIDERS_CONFIGURATION.MAPBOX_TOKEN}
+                            mapboxApiAccessToken={mapboxApiAccessToken}
                             id="map"
                             getState={keplerGlGetState}
                             width={width}
                             height={height}
-                            cloudProviders={CLOUD_PROVIDERS}
+                            mapStyles={OFFLINE_MODE ? [OFFLINE_MAP_STYLE] : []}
+                            mapStylesReplaceDefault={OFFLINE_MODE}
+                            cloudProviders={DEFAULT_FEATURE_FLAGS.cloudStorage ? CLOUD_PROVIDERS : []}
                             localeMessages={messages}
                             onExportToCloudSuccess={onExportFileSuccess}
                             onLoadCloudMapSuccess={onLoadCloudMapSuccess}
